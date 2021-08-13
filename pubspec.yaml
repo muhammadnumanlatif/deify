@@ -13,6 +13,7 @@ dependencies:
   firebase_auth: 3.0.1
   lottie: ^1.1.0
   font_awesome_flutter: ^9.1.0
+  introduction_screen: ^2.1.0
   flutter: 
     sdk: flutter
 

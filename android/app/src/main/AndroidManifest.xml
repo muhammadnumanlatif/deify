@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.avinetech.deify">
    <application
-        android:label="deify"
+        android:label="Deify"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -1,3 +1,4 @@
+import 'package:deify/app/controllers/auth_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -8,15 +9,15 @@ import 'app/utils/error.dart';
 import 'app/utils/loading.dart';
 import 'app/utils/splash.dart';
 
-final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  final authC = Get.put(AuthController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +32,30 @@ class MyApp extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return FutureBuilder(
-              future: Future.delayed(Duration(seconds: 3)),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return GetMaterialApp(
-                    title: "Deify - DatingApp",
-                    initialRoute: AppPages.INITIAL,
-                    getPages: AppPages.routes,
-                  );
-                }
-
-                return SplashScreen();
-              });
+          return GetMaterialApp(
+            title: "Deify - DatingApp",
+            initialRoute: Routes.LOGIN,
+            getPages: AppPages.routes,
+          );
+          // return FutureBuilder(
+          //     future: Future.delayed(Duration(seconds: 3)),
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.done) {
+          //         return Obx(
+          //           () => GetMaterialApp(
+          //             title: "Deify - DatingApp",
+          //             initialRoute: authC.isSkipIntro.isTrue
+          //                 ? authC.isAuth.isTrue
+          //                     ? Routes.HOME
+          //                     : Routes.LOGIN
+          //                 : Routes.INTRODUCTION,
+          //             getPages: AppPages.routes,
+          //           ),
+          //         );
+          //       }
+          //
+          //       return SplashScreen();
+          //     });
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
