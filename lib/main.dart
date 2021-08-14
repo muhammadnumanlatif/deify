@@ -33,8 +33,9 @@ class MyApp extends StatelessWidget {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
             title: "Deify - DatingApp",
-            initialRoute: Routes.HOME,
+            initialRoute: Routes.SEARCH,
             getPages: AppPages.routes,
           );
           // return FutureBuilder(
