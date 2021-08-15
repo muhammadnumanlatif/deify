@@ -15,6 +15,7 @@ dependencies:
   font_awesome_flutter: ^9.1.0
   introduction_screen: ^2.1.0
   flutter_svg: ^0.22.0
+  avatar_glow: 2.0.1
   flutter: 
     sdk: flutter
 
@@ -23,9 +24,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter: 
-  uses-material-design: true
-  assets:
+  assets: 
     - assets/lottie/
     - assets/logo/
     - assets/models/
+  uses-material-design: true
 

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             title: "Deify - DatingApp",
-            initialRoute: Routes.SEARCH,
+            initialRoute: Routes.PROFILE,
             getPages: AppPages.routes,
           );
           // return FutureBuilder(
