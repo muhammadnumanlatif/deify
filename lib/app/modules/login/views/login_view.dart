@@ -6,12 +6,14 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../controllers/login_controller.dart';
+import '../../../controllers/auth_controller.dart';
 
 class LoginView extends GetView<LoginController> {
   final Widget svg = SvgPicture.asset(
     'assets/logo/deify.svg',
     fit: BoxFit.cover,
   );
+  final authC = Get.find<AuthController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +37,7 @@ class LoginView extends GetView<LoginController> {
                       height: Get.height * 0.15,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: ()=>authC.login(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

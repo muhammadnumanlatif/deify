@@ -16,75 +16,142 @@ class IntroductionView extends GetView<IntroductionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepOrange,
-      body: Stack(
-        children: [
-          svg,
-          IntroductionScreen(
-            pages: [
-              PageViewModel(
-                title: "Remote Access",
-                body: "This is standalone app to get remote access.",
-                image: Container(
-                  width: Get.width*0.6,
-                  height: Get.height*0.6,
-                  child: Center(
-                    child: Lottie.asset('assets/lottie/main-laptop-duduk.json'),
-                  ),
-                ),
+      body: IntroductionScreen(
+        pages: [
+          PageViewModel(
+            title: "Welcome",
+            body: "To meet your Destiny.",
+            decoration: PageDecoration(
+              pageColor: Colors.deepOrange,
+              imagePadding: EdgeInsets.only(
+                top: Get.height*0.2,
               ),
-              PageViewModel(
-                title: "Transport",
-                body: "Different vehicle options are available.",            image: Container(
-                  width: Get.width*0.6,
-                  height: Get.height*0.6,
-                  child: Center(
-                    child: Lottie.asset('assets/lottie/ojek.json'),
-                  ),
-                ),
+              titleTextStyle: TextStyle(
+                color:Colors.white,
+                fontSize: Get.width*0.1
               ),
-              PageViewModel(
-                title: "Payment",
-                body: "In app option is added.",
-                image: Container(
-                  width: Get.width*0.6,
-                  height: Get.height*0.6,
-                  child: Center(
-                    child: Lottie.asset('assets/lottie/payment.json'),
-                  ),
-                ),
-              ),
-              PageViewModel(
-                title: "Login",
-                body: "Click to go on login.",
-                image: Container(
-                  width: Get.width*0.6,
-                  height: Get.height*0.6,
-                  child: Center(
-                    child: Lottie.asset('assets/lottie/register.json'),
-                  ),
-                ),
-              ),
-            ],
-            onDone: () => Get.offAllNamed(Routes.LOGIN),
-            showSkipButton: true,
-            skip: Text(
-              "Skip",
-            ),
-            next: Text(
-              "Next",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+              bodyTextStyle:  TextStyle(
+                color:Colors.white,
+                  fontSize: Get.width*0.05
               ),
             ),
-            done: Text(
-                "Login",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
+            image: Container(
+              width: Get.width*0.8,
+              height: Get.height*0.8,
+              child: Center(
+                child: Lottie.asset(
+                    'assets/lottie/main-laptop-duduk.json',
                 ),
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Connecting",
+            body: "We help to meet people.",            image: Container(
+              width: Get.width*0.6,
+              height: Get.height*0.6,
+              child: Center(
+                child: Lottie.asset('assets/lottie/ojek.json'),
+              ),
+            ),
+            decoration: PageDecoration(
+              pageColor: Colors.deepOrange,
+              imagePadding: EdgeInsets.only(
+                top: Get.height*0.2,
+              ),
+              titleTextStyle: TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.1
+              ),
+              bodyTextStyle:  TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.05
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Payment",
+            body: "In app option is available.",
+            image: Container(
+              width: Get.width*0.6,
+              height: Get.height*0.6,
+              child: Center(
+                child: Lottie.asset('assets/lottie/payment.json'),
+              ),
+            ),
+            decoration: PageDecoration(
+              pageColor: Colors.deepOrange,
+              imagePadding: EdgeInsets.only(
+                top: Get.height*0.2,
+              ),
+              titleTextStyle: TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.1
+              ),
+              bodyTextStyle:  TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.05
+              ),
+            ),
+          ),
+          PageViewModel(
+            title: "Login",
+            body: "Click to go on login.",
+            image: Container(
+              width: Get.width*0.6,
+              height: Get.height*0.6,
+              child: Center(
+                child: Lottie.asset('assets/lottie/register.json'),
+              ),
+            ),
+            decoration: PageDecoration(
+              pageColor: Colors.deepOrange,
+              imagePadding: EdgeInsets.only(
+                top: Get.height*0.2,
+              ),
+              titleTextStyle: TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.1
+              ),
+              bodyTextStyle:  TextStyle(
+                  color:Colors.white,
+                  fontSize: Get.width*0.05
+              ),
             ),
           ),
         ],
+        onDone: () => Get.offAllNamed(Routes.LOGIN),
+        showSkipButton: true,
+        globalBackgroundColor: Colors.deepOrange,
+        dotsDecorator: DotsDecorator(
+          color: Colors.amber.shade900,
+          activeColor: Colors.white,
+
+        ),
+        skip: Text(
+          "Skip",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+            fontSize: Get.width*0.05,
+          ),
+        ),
+        next: Text(
+          "Next",
+          style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            fontSize: Get.width*0.05,
+          ),
+        ),
+        done: Text(
+            "Login",
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: Get.width*0.05
+            ),
+        ),
       ),
     );
   }

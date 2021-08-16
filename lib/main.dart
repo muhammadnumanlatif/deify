@@ -29,34 +29,27 @@ class MyApp extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorScreen();
         }
-
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: "Deify - DatingApp",
-            initialRoute: Routes.CHAT_ROOM,
-            getPages: AppPages.routes,
-          );
-          // return FutureBuilder(
-          //     future: Future.delayed(Duration(seconds: 3)),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.done) {
-          //         return Obx(
-          //           () => GetMaterialApp(
-          //             title: "Deify - DatingApp",
-          //             initialRoute: authC.isSkipIntro.isTrue
-          //                 ? authC.isAuth.isTrue
-          //                     ? Routes.HOME
-          //                     : Routes.LOGIN
-          //                 : Routes.INTRODUCTION,
-          //             getPages: AppPages.routes,
-          //           ),
-          //         );
-          //       }
-          //
-          //       return SplashScreen();
-          //     });
+          return FutureBuilder(
+              future: Future.delayed(Duration(seconds: 3)),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Obx(
+                    () => GetMaterialApp(
+                      title: "Deify - DatingApp",
+                      initialRoute: authC.isSkipIntro.isTrue
+                          ? authC.isAuth.isTrue
+                              ? Routes.HOME
+                              : Routes.LOGIN
+                          : Routes.INTRODUCTION,
+                      getPages: AppPages.routes,
+                    ),
+                  );
+                }
+
+                return SplashScreen();
+              });
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
