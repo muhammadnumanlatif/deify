@@ -31,6 +31,16 @@ class MyApp extends StatelessWidget {
         }
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
+          // return Obx(
+          //             () => GetMaterialApp(
+          //               debugShowCheckedModeBanner: false,
+          //               title: "Deify - DatingApp",
+          //               initialRoute: authC.isAuth.isTrue
+          //                       ? Routes.HOME
+          //                       : Routes.LOGIN,
+          //               getPages: AppPages.routes,
+          //             ),
+          //           );
           return FutureBuilder(
               future: Future.delayed(Duration(seconds: 3)),
               builder: (context, snapshot) {
