@@ -8,4 +8,8 @@ class AuthController extends GetxController {
   void  login(){
     Get.offAllNamed(Routes.HOME);
   }
+
+  void logout(){
+    Get.offAllNamed(Routes.LOGIN);
+  }
 }

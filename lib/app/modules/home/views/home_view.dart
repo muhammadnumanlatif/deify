@@ -14,10 +14,9 @@ class HomeView extends GetView<HomeController> {
   );
   final List<Widget> myChats = List.generate(
     20,
-    (index) => InkWell(
-      
+    (index) => GestureDetector(
+      onTap: ()=>Get.toNamed(Routes.CHAT_ROOM),
       child: ListTile(
-        onTap: ()=>Get.toNamed(Routes.CHAT_ROOM),
         leading: CircleAvatar(
           backgroundColor: Colors.deepOrange.shade500,
           backgroundImage: AssetImage(

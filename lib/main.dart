@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return Obx(
                     () => GetMaterialApp(
+                      debugShowCheckedModeBanner: false,
                       title: "Deify - DatingApp",
                       initialRoute: authC.isSkipIntro.isTrue
                           ? authC.isAuth.isTrue
