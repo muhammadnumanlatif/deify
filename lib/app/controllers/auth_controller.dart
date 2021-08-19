@@ -3,6 +3,7 @@ import 'package:deify/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,12 +13,12 @@ class AuthController extends GetxController {
   //*variable
   var isSkipIntro = false.obs;
   var isAuth = false.obs;
+  var user = UsersModel().obs;
 
   //*instance
   GoogleSignIn _googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _currentUser;
   UserCredential? userCredential;
-  UsersModel user = UsersModel();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   //*initialized method
@@ -72,7 +73,7 @@ class AuthController extends GetxController {
 
         final currUser = await users.doc(_currentUser!.email).get();
         final currUserData = currUser.data() as Map<String, dynamic>;
-        user = UsersModel(
+        user(UsersModel(
           uid: currUserData["uid"],
           name: currUserData["name"],
           email: currUserData["email"],
@@ -81,7 +82,7 @@ class AuthController extends GetxController {
           creationTime: currUserData["creationTime"],
           lastSignInTime: currUserData["lastSignInTime"],
           updatedTime: currUserData["updatedTime"],
-        );
+        ));
 
         return true;
       }
@@ -93,8 +94,11 @@ class AuthController extends GetxController {
 
   //*login method
   Future<void> login() async {
+    //try
     try {
+      //*sign out
       await _googleSignIn.signOut();
+      //*sign in
       await _googleSignIn.signIn().then((value) => _currentUser = value);
       final isSignIn = await _googleSignIn.isSignedIn();
 
@@ -108,15 +112,15 @@ class AuthController extends GetxController {
         await FirebaseAuth.instance
             .signInWithCredential(credential)
             .then((value) => userCredential = value);
-
+        //*local storage
         final box = GetStorage();
         if (box.read('skipIntro') != null) {
           box.remove('skipIntro');
         }
         box.write('skipIntro', true);
-
+        //*firestore instance
         CollectionReference users = firestore.collection('users');
-
+        //*get user
         final checkUser = await users.doc(_currentUser!.email).get();
         if (checkUser.data() == null) {
           users.doc(_currentUser!.email).set({
@@ -137,9 +141,11 @@ class AuthController extends GetxController {
                 userCredential!.user!.metadata.lastSignInTime!.toIso8601String(),
           });
         }
+        //*current user
         final currUser = await users.doc(_currentUser!.email).get();
         final currUserData = currUser.data() as Map<String, dynamic>;
-        user = UsersModel(
+        //*add to user user model
+        user(UsersModel(
           uid: currUserData["uid"],
           name: currUserData["name"],
           email: currUserData["email"],
@@ -148,7 +154,7 @@ class AuthController extends GetxController {
           creationTime: currUserData["creationTime"],
           lastSignInTime: currUserData["lastSignInTime"],
           updatedTime: currUserData["updatedTime"],
-        );
+        ));
         isAuth.value = true;
         Get.offAllNamed(Routes.HOME);
       } else {
@@ -166,5 +172,71 @@ class AuthController extends GetxController {
     Get.offAllNamed(Routes.LOGIN);
   }
 
+  //change profile method
+  void changeProfile(
+      String name,
+      String status,
+      ){
+    //*var
+    String date = DateTime.now().toIso8601String();
 
+    //*update firebase
+    CollectionReference users = firestore.collection('users');
+    users.doc(_currentUser!.email).update({
+      "name": name,
+      "status": status,
+      "lastSignInTime":
+      userCredential!.user!.metadata.lastSignInTime!.toIso8601String(),
+      "updatedTime": DateTime.now().toIso8601String()
+    });
+
+    //*update model
+    user.update((user) {
+      user!.name=name;
+      user.status=status;
+      user.lastSignInTime=
+          userCredential!.user!.metadata.lastSignInTime!.toIso8601String();
+      user.updatedTime = date;
+    });
+
+    user.refresh();
+    Get.snackbar(
+      'Update',
+      "Profile has been updated.",
+      backgroundColor: Colors.white,
+      colorText: Colors.deepOrange,
+    );
+  }
+
+  //*update status
+  void updateStatus(String status){
+    //*var
+    String date = DateTime.now().toIso8601String();
+    //*update firebase
+    CollectionReference users = firestore.collection('users');
+    users.doc(_currentUser!.email).update({
+      "status": status,
+      "lastSignInTime":
+      userCredential!.user!.metadata.lastSignInTime!.toIso8601String(),
+      "updatedTime":date
+    });
+
+    //*update model
+    user.update((user) {
+      user!.status=status;
+      user.lastSignInTime=
+          userCredential!.user!.metadata.lastSignInTime!.toIso8601String();
+      user.updatedTime = date;
+    });
+
+    user.refresh();
+    Get.snackbar(
+      'Update',
+      "Status has been updated.",
+      backgroundColor: Colors.white,
+      colorText: Colors.deepOrange,
+    );
+  }
+
+  //*end
 }
