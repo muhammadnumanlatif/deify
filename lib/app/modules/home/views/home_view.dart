@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:deify/app/controllers/auth_controller.dart';
 import 'package:deify/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 
@@ -12,47 +13,8 @@ class HomeView extends GetView<HomeController> {
     'assets/logo/deify.svg',
     fit: BoxFit.cover,
   );
-  final List<Widget> myChats = List.generate(
-    20,
-    (index) => GestureDetector(
-      onTap: ()=>Get.toNamed(Routes.CHAT_ROOM),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.deepOrange.shade500,
-          backgroundImage: AssetImage(
-              'assets/logo/noimage.png',
-          ),
-        ),
-        title: Text(
-          'Person ${index + 1}',
-          style: TextStyle(
-            fontSize: Get.width*0.050,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        subtitle: Text(
-          'Status ${index + 1}',
-          style: TextStyle(
-            fontSize: Get.width*0.035,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        trailing: Chip(
-          backgroundColor: Colors.deepOrange.shade500,
-          label: Text(
-            '3',
-            style: TextStyle(
-              fontSize: Get.width * 0.035,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    ),
-  ).reversed.toList();
+  final authc = Get.find<AuthController>();
+  List dataTemp = List.generate(10, (i) => null);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,9 +35,7 @@ class HomeView extends GetView<HomeController> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.white70,
-                      width: Get.width*0.005
-                    ),
+                        color: Colors.white70, width: Get.width * 0.005),
                   ),
                 ),
                 // color: Colors.deepOrange.shade500,
@@ -85,14 +45,14 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       'Chats',
                       style: TextStyle(
-                        fontSize: Get.width*0.12,
+                        fontSize: Get.width * 0.12,
                         color: Colors.white,
                       ),
                     ),
                     Material(
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
-                        onTap: ()=>Get.toNamed(Routes.PROFILE),
+                        onTap: () => Get.toNamed(Routes.PROFILE),
                         splashColor: Colors.deepOrange,
                         child: Icon(
                           Icons.person,
@@ -105,10 +65,87 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                 padding: EdgeInsets.zero,
-                  itemCount: myChats.length,
-                  itemBuilder: (context, index) => myChats[index],
+                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: controller.chatsStream(authc.user.value.email!),
+                  builder: (context, snapshot1) {
+                    if (snapshot1.connectionState == ConnectionState.active) {
+                      var allChats = (snapshot1.data!.data()
+                          as Map<String, dynamic>)["chats"] as List;
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: allChats.length,
+                        itemBuilder: (context, index) {
+                          return StreamBuilder<
+                              DocumentSnapshot<Map<String, dynamic>>>(
+                            stream: controller
+                                .friendStream(allChats[index]["connection"]),
+                            builder: (context, snapshot2) {
+                              if (snapshot2.connectionState ==
+                                  ConnectionState.active) {
+                                var data = snapshot2.data!.data();
+                                return ListTile(
+                                  onTap: allChats[index]["total_unread"] == 0
+                                  ? (){}
+                                      :()=>Get.toNamed(Routes.CHAT_ROOM),
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      Get.width * 0.1,
+                                    ),
+                                    child: data!["photoUrl"] == "noimage"
+                                        ? Image.asset(
+                                            "assets/logo/noimage.png",
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.network(
+                                            data["photoUrl"],
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                  title: Text(
+                                    data["name"],
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.050,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  subtitle: data["status"]==""
+                                  ? SizedBox()
+                                  :Text(
+                                    data["status"],
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.035,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  trailing: allChats[index]["total_unread"] == 0
+                                      ? SizedBox()
+                                      : Chip(
+                                          backgroundColor:
+                                              Colors.deepOrange.shade500,
+                                          label: Text(
+                                            "${allChats[index]["total_unread"]}",
+                                            style: TextStyle(
+                                              fontSize: Get.width * 0.030,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                );
+                              }
+                              ;
+                              return LinearProgressIndicator();
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
             ],
@@ -116,11 +153,11 @@ class HomeView extends GetView<HomeController> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: ()=>Get.toNamed(Routes.SEARCH),
+        onPressed: () => Get.toNamed(Routes.SEARCH),
         backgroundColor: Colors.white,
         splashColor: Colors.deepOrange,
         child: Icon(
-            Icons.search,
+          Icons.search,
           color: Colors.deepOrange,
           size: Get.width * 0.09,
         ),
