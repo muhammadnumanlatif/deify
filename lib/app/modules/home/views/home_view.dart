@@ -65,82 +65,85 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
               Expanded(
-                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   stream: controller.chatsStream(authc.user.value.email!),
                   builder: (context, snapshot1) {
                     if (snapshot1.connectionState == ConnectionState.active) {
-                      var allChats = (snapshot1.data!.data()
-                          as Map<String, dynamic>)["chats"] as List;
+                      var listDocsChats = snapshot1.data!.docs;
                       return ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: allChats.length,
-                        itemBuilder: (context, index) {
-                          return StreamBuilder<
-                              DocumentSnapshot<Map<String, dynamic>>>(
-                            stream: controller
-                                .friendStream(allChats[index]["connection"]),
-                            builder: (context, snapshot2) {
-                              if (snapshot2.connectionState ==
-                                  ConnectionState.active) {
-                                var data = snapshot2.data!.data();
-                                return ListTile(
-                                  onTap: allChats[index]["total_unread"] == 0
-                                  ? (){}
-                                      :()=>Get.toNamed(Routes.CHAT_ROOM),
-                                  leading: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      Get.width * 0.1,
-                                    ),
-                                    child: data!["photoUrl"] == "noimage"
-                                        ? Image.asset(
-                                            "assets/logo/noimage.png",
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.network(
-                                            data["photoUrl"],
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                  title: Text(
-                                    data["name"],
-                                    style: TextStyle(
-                                      fontSize: Get.width * 0.050,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  subtitle: data["status"]==""
-                                  ? SizedBox()
-                                  :Text(
-                                    data["status"],
-                                    style: TextStyle(
-                                      fontSize: Get.width * 0.035,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  trailing: allChats[index]["total_unread"] == 0
-                                      ? SizedBox()
-                                      : Chip(
-                                          backgroundColor:
-                                              Colors.deepOrange.shade500,
-                                          label: Text(
-                                            "${allChats[index]["total_unread"]}",
-                                            style: TextStyle(
-                                              fontSize: Get.width * 0.030,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot1.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            return StreamBuilder<
+                                    DocumentSnapshot<Map<String, dynamic>>>(
+                                stream: controller.friendStream(
+                                    listDocsChats[index]["connection"]),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.connectionState ==
+                                      ConnectionState.active) {
+                                    var data = snapshot2.data!.data();
+                                    return ListTile(
+                                      onTap: () => Get.toNamed(
+                                        Routes.CHAT_ROOM,
+                                        arguments: {
+                                         "chat_id": "${listDocsChats[index].id}",
+                                          "friendEmail":"${listDocsChats[index]["connection"]}",
+                                        },
+                                      ),
+                                      leading: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          Get.width * 0.1,
                                         ),
-                                );
-                              }
-                              ;
-                              return LinearProgressIndicator();
-                            },
-                          );
-                        },
-                      );
+                                        child: data!["photoUrl"] == "noimage"
+                                            ? Image.asset(
+                                                "assets/logo/noimage.png",
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(
+                                                data["photoUrl"],
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                      title: Text(
+                                        data["name"],
+                                        style: TextStyle(
+                                          fontSize: Get.width * 0.050,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      subtitle:
+                                      data["status"] == ""
+                                          ? SizedBox()
+                                          : Text(
+                                              data["status"],
+                                              style: TextStyle(
+                                                fontSize: Get.width * 0.035,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                      trailing: listDocsChats[index]
+                                                  ["total_unread"] ==
+                                              0
+                                          ? SizedBox()
+                                          : Chip(
+                                              backgroundColor:
+                                                  Colors.deepOrange.shade500,
+                                              label: Text(
+                                                "${listDocsChats[index]["total_unread"]}",
+                                                style: TextStyle(
+                                                  fontSize: Get.width * 0.030,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                    );
+                                  }
+                                  return LinearProgressIndicator();
+                                });
+                          });
                     }
                     return Center(
                       child: CircularProgressIndicator(),

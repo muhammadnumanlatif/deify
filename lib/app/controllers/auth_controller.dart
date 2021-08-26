@@ -75,23 +75,14 @@ class AuthController extends GetxController {
         final currUserData = currUser.data() as Map<String, dynamic>;
 
         // add to user user model
-        user(UsersModel(
-          creationTime: currUserData["creationTime"],
-          email: currUserData["email"],
-          keyName: currUserData["keyName"],
-          lastSignInTime: currUserData["lastSignInTime"],
-          name: currUserData["name"],
-          photoUrl: currUserData["photoUrl"],
-          status: currUserData["status"],
-          uid: currUserData["uid"],
-          updatedTime: currUserData["updatedTime"],
-          chats: [],
-        ));
+        user(UsersModel.fromJson(currUserData));
+        user.refresh();
 
         //* firebase user chats
-        final listChats = await users.doc(_currentUser!.email).collection('chats').get();
-        if(listChats.docs.length!=0){
-          List<ChatUser> dataListChats = List<ChatUser>.empty();
+        final listChats =
+            await users.doc(_currentUser!.email).collection('chats').get();
+        if (listChats.docs.length != 0) {
+          List<ChatUser> dataListChats = [];
           listChats.docs.forEach((element) {
             var dataDocChat = element.data();
             var dataDocChatId = element.id;
@@ -106,12 +97,13 @@ class AuthController extends GetxController {
           user.update((user) {
             user!.chats = dataListChats;
           });
-        }else{
+        } else {
           //*model user chats
           user.update((user) {
             user!.chats = [];
           });
         }
+        user.refresh();
 
         return true;
       }
@@ -178,43 +170,35 @@ class AuthController extends GetxController {
         final currUserData = currUser.data() as Map<String, dynamic>;
 
         // add to user user model
-        user(UsersModel(
-          creationTime: currUserData["creationTime"],
-          email: currUserData["email"],
-          keyName: currUserData["keyName"],
-          lastSignInTime: currUserData["lastSignInTime"],
-          name: currUserData["name"],
-          photoUrl: currUserData["photoUrl"],
-          status: currUserData["status"],
-          uid: currUserData["uid"],
-          updatedTime: currUserData["updatedTime"],
-          chats: [],
-        ));
+        user(UsersModel.fromJson(currUserData));
+        user.refresh();
 
         //* firebase user chats
-        final listChats = await users.doc(_currentUser!.email).collection('chats').get();
-        if(listChats.docs.length!=0){
-          List<ChatUser> dataListChats = List<ChatUser>.empty();
-        listChats.docs.forEach((element) {
-          var dataDocChat = element.data();
-          var dataDocChatId = element.id;
-          dataListChats.add(ChatUser(
-            chatId: dataDocChatId,
-            connection: dataDocChat["connection"],
-            lastTime: dataDocChat["lastTime"],
-            total_unread: dataDocChat["total_unread"],
-          ));
-        });
-        //*model user chats
+        final listChats =
+            await users.doc(_currentUser!.email).collection('chats').get();
+        if (listChats.docs.length != 0) {
+          List<ChatUser> dataListChats = [];
+          listChats.docs.forEach((element) {
+            var dataDocChat = element.data();
+            var dataDocChatId = element.id;
+            dataListChats.add(ChatUser(
+              chatId: dataDocChatId,
+              connection: dataDocChat["connection"],
+              lastTime: dataDocChat["lastTime"],
+              total_unread: dataDocChat["total_unread"],
+            ));
+          });
+          //*model user chats
           user.update((user) {
             user!.chats = dataListChats;
           });
-        }else{
+        } else {
           //*model user chats
           user.update((user) {
             user!.chats = [];
           });
         }
+        user.refresh();
 
         isAuth.value = true;
         Get.offAllNamed(Routes.HOME);
@@ -309,34 +293,32 @@ class AuthController extends GetxController {
     CollectionReference chats = firestore.collection("chats");
     CollectionReference users = firestore.collection("users");
 
-    final docChats = await users.doc(_currentUser!.email).collection("chats").get();
+    final docChats =
+        await users.doc(_currentUser!.email).collection("chats").get();
 
-    if(docChats.docs.length!=0){
+    if (docChats.docs.length != 0) {
       //*not add new connection
-     final checkConnection = await users.doc(_currentUser!.email).collection("chats")
+      final checkConnection = await users
+          .doc(_currentUser!.email)
+          .collection("chats")
           .where("connection", isEqualTo: friendEmail)
           .get();
-     //*connection condition
-      if(checkConnection.docs.length != 0){
-        flagNewConnection=false;
-
+      //*connection condition
+      if (checkConnection.docs.length != 0) {
+        flagNewConnection = false;
         //* chat_id from chat collections
-       chat_id = checkConnection.docs[0].id;
-
-
-      }else{
+        chat_id = checkConnection.docs[0].id;
+      } else {
         //*add new connection
         flagNewConnection = true;
       }
-
-    } else{
+    } else {
       //*add new connection
       flagNewConnection = true;
     }
 
     //*flag New Connection True
-    if(flagNewConnection == true){
-
+    if (flagNewConnection == true) {
       final chatsDocs = await chats.where(
         "connections",
         whereIn: [
@@ -351,12 +333,13 @@ class AuthController extends GetxController {
         ],
       ).get();
 
-      if(chatsDocs.docs.length != 0){
-        final chatsData =  chatsDocs.docs[0].data() as Map<String, dynamic>;
-        final chatDataId  = chatsDocs.docs[0].id;
+      if (chatsDocs.docs.length != 0) {
+        final chatsData = chatsDocs.docs[0].data() as Map<String, dynamic>;
+        final chatDataId = chatsDocs.docs[0].id;
 
         //*user firebase
-        await users.doc(_currentUser!.email)
+        await users
+            .doc(_currentUser!.email)
             .collection("chats")
             .doc(chatDataId)
             .set({
@@ -367,8 +350,9 @@ class AuthController extends GetxController {
         });
 
         //* firebase user chats
-        final listChats = await users.doc(_currentUser!.email).collection('chats').get();
-        if(listChats.docs.length!=0){
+        final listChats =
+            await users.doc(_currentUser!.email).collection('chats').get();
+        if (listChats.docs.length != 0) {
           List<ChatUser> dataListChats = List<ChatUser>.empty();
           listChats.docs.forEach((element) {
             var dataDocChat = element.data();
@@ -384,7 +368,7 @@ class AuthController extends GetxController {
           user.update((user) {
             user!.chats = dataListChats;
           });
-        }else{
+        } else {
           //*model user chats
           user.update((user) {
             user!.chats = [];
@@ -393,21 +377,24 @@ class AuthController extends GetxController {
 
         chat_id = chatDataId;
         user.refresh();
-      }else {
+      } else {
         //*chat firebase
         final newChatDoc = await chats.add({
           "connections": [
             _currentUser!.email,
             friendEmail,
           ],
-          "chat": [],
         });
 
+        //* chats firebase
+        await chats.doc(newChatDoc.id).collection("chat");
+
         //*user firebase
-        await users.doc(_currentUser!.email)
+        await users
+            .doc(_currentUser!.email)
             .collection("chats")
             .doc(newChatDoc.id)
-        .set({
+            .set({
           "connection": friendEmail,
           "chat_id": newChatDoc.id,
           "lastTime": date,
@@ -415,8 +402,9 @@ class AuthController extends GetxController {
         });
 
         //* firebase user chats
-        final listChats = await users.doc(_currentUser!.email).collection('chats').get();
-        if(listChats.docs.length!=0){
+        final listChats =
+            await users.doc(_currentUser!.email).collection('chats').get();
+        if (listChats.docs.length != 0) {
           List<ChatUser> dataListChats = List<ChatUser>.empty();
           listChats.docs.forEach((element) {
             var dataDocChat = element.data();
@@ -432,7 +420,7 @@ class AuthController extends GetxController {
           user.update((user) {
             user!.chats = dataListChats;
           });
-        }else{
+        } else {
           //*model user chats
           user.update((user) {
             user!.chats = [];
@@ -442,12 +430,16 @@ class AuthController extends GetxController {
         chat_id = newChatDoc.id;
         user.refresh();
       }
-
     }
     print(chat_id);
     //*got to chat room
-    Get.toNamed(Routes.CHAT_ROOM,arguments: chat_id);
-
+    Get.toNamed(Routes.CHAT_ROOM,
+      arguments:
+    {
+      "chat_id": "$chat_id",
+      "friendEmail":"$friendEmail",
+    },
+    );
   } //*addNewConnection
 
 } //*end

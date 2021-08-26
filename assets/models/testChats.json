@@ -3,9 +3,6 @@
     "",
     ""
   ],
-  "total_chats": 10,
-  "total_read": 8,
-  "total_unread": 2,
    "chat": [
      {
        "sender": "",
@@ -21,6 +18,5 @@
        "time": "",
        "isRead": false
      }
-   ],
-  "lastTime": ""
+   ]
 }
