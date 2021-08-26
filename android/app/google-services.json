@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "489802582252",
+    "project_id": "deify-b23c8",
+    "storage_bucket": "deify-b23c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489802582252:android:c7976cfc61fc1b0842fdc9",
+        "android_client_info": {
+          "package_name": "com.avinetech.deify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489802582252-uv94cdscb1vg52a76d0j52p8r8qegqed.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.avinetech.deify",
+            "certificate_hash": "d685802158fc06462a7dfadacf0e62bcb1c4d80e"
+          }
+        },
+        {
+          "client_id": "489802582252-tr02o0gjmi4hk2mhd2lrdil1hq3mpcj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBly9eouVai3SpdQoBzDh9Z0RUz9Nj4V7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489802582252-tr02o0gjmi4hk2mhd2lrdil1hq3mpcj1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
